@@ -13,11 +13,10 @@ public class Main {
         for (File file : listOfFiles) {
             if (file.isFile()) {
                 System.out.println(file.getName());
-                ImageBuffer imgbuffer = new ImageBuffer();
-                BufferedImage img = imgbuffer.getImage(new File(path + "input\\" + file.getName()));
-                EdgeDetection edgeDetection = new EdgeDetection();
-                edgeDetection.sobelEdgeDetection(img);
-                imgbuffer.saveImage(new File(path + "output\\" + file.getName()));
+                System.out.println(file.getAbsolutePath());
+                String pathToPicture = "D:\\JavaProjects\\images\\input\\" + file.getName();
+                Thread imageThread = new Thread(new ImageThread(path, file.getName()));
+                imageThread.start();
             }
         }
 
