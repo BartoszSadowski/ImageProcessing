@@ -1,6 +1,7 @@
 package com.company;
 
 import java.awt.image.BufferedImage;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class EdgeDetection {
 
@@ -10,11 +11,14 @@ public class EdgeDetection {
 
         int maxGval = 0;
         int[][] edgeColors = new int[x][y];
-        int maxGradient = -1;
+        AtomicInteger maxGradient = new AtomicInteger(-1) ;
 
         for (int i = 1; i < x - 1; i++) {
             for (int j = 1; j < y - 1; j++) {
 
+
+                // Lambda Runnable
+                Runnable task2 = (i, j) -> {
                 int val00 = getGrayScale(img.getRGB(i - 1, j - 1));
                 int val01 = getGrayScale(img.getRGB(i - 1, j));
                 int val02 = getGrayScale(img.getRGB(i - 1, j + 1));
@@ -38,15 +42,18 @@ public class EdgeDetection {
                 double gval = Math.sqrt((gx * gx) + (gy * gy));
                 int g = (int) gval;
 
-                if (maxGradient < g) {
-                    maxGradient = g;
+                if (maxGradient.get() < g) {
+                    maxGradient.set(g);
                 }
 
-                edgeColors[i][j] = g;
+                edgeColors[i][j] = g; };
+                new Thread(task2).start();
+
+
             }
         }
 
-        double scale = 255.0 / maxGradient;
+        double scale = 255.0 / maxGradient.get();
 
         for (int i = 1; i < x - 1; i++) {
             for (int j = 1; j < y - 1; j++) {
