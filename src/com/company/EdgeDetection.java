@@ -14,16 +14,18 @@ public class EdgeDetection {
     int y;
     public int[][] edgeColors;
     AtomicInteger maxGradient = new AtomicInteger(-1) ;
-    public void sobelEdgeDetection(BufferedImage img) {
+
+    public EdgeDetection(BufferedImage img){
         this.img=img;
         this.x = img.getWidth();
         this.y = img.getHeight();
         edgeColors = new int[x][y];
+    }
+
+    public void threadSobelEdgeDetection() {
+
         Worker runnable = null;
         Thread myThreads[] = new Thread[y];
-        System.out.println(x);
-        System.out.println(y);
-        System.out.println(edgeColors.length);
         for (int i = 1; i < x - 1; i++) {
             runnable = new Worker( y,  i,  img);
             myThreads[i] = new Thread(runnable);
@@ -40,14 +42,7 @@ public class EdgeDetection {
                 e.printStackTrace();
             }
         }
-//        for (int i = 1; i < x - 1; i++) {
-//            for (int j = 1; j < y - 1; j++) {
-//                if (edgeColors[i][j]!=0)
-//                    System.out.println(edgeColors[i][j]);
-//            }
-//        }
 
-        System.out.println("THREADSAJDOSADJOSAIDKOASDASOD");
         double scale = 255.0 / maxGradient.get();
 
         for (int i = 1; i < x - 1; i++) {
@@ -68,43 +63,56 @@ public class EdgeDetection {
 
         //from https://en.wikipedia.org/wiki/Grayscale, calculating luminance
         int gray = (int)(0.2126 * r + 0.7152 * g + 0.0722 * b);
-        //int gray = (r + g + b) / 3;
+//        int gray = (r + g + b) / 3;
 
         return gray;
     }
 
 
-    public void countLine(int i){
-        for (int j = 1; j < y - 1; j++) {
+    public void sobelEdgeDetection(){
+        for (int i = 1; i < x - 1; i++) {
+            for (int j = 1; j < y - 1; j++) {
 
-            int val00 = getGrayScale(img.getRGB(i - 1, j - 1));
-            int val01 = getGrayScale(img.getRGB(i - 1, j));
-            int val02 = getGrayScale(img.getRGB(i - 1, j + 1));
+                int val00 = getGrayScale(img.getRGB(i - 1, j - 1));
+                int val01 = getGrayScale(img.getRGB(i - 1, j));
+                int val02 = getGrayScale(img.getRGB(i - 1, j + 1));
 
-            int val10 = getGrayScale(img.getRGB(i, j - 1));
-            int val11 = getGrayScale(img.getRGB(i, j));
-            int val12 = getGrayScale(img.getRGB(i, j + 1));
+                int val10 = getGrayScale(img.getRGB(i, j - 1));
+                int val11 = getGrayScale(img.getRGB(i, j));
+                int val12 = getGrayScale(img.getRGB(i, j + 1));
 
-            int val20 = getGrayScale(img.getRGB(i + 1, j - 1));
-            int val21 = getGrayScale(img.getRGB(i + 1, j));
-            int val22 = getGrayScale(img.getRGB(i + 1, j + 1));
+                int val20 = getGrayScale(img.getRGB(i + 1, j - 1));
+                int val21 = getGrayScale(img.getRGB(i + 1, j));
+                int val22 = getGrayScale(img.getRGB(i + 1, j + 1));
 
-            int gx = ((-1 * val00) + (0 * val01) + (1 * val02))
-                    + ((-2 * val10) + (0 * val11) + (2 * val12))
-                    + ((-1 * val20) + (0 * val21) + (1 * val22));
+                int gx = ((-1 * val00) + (0 * val01) + (1 * val02))
+                        + ((-2 * val10) + (0 * val11) + (2 * val12))
+                        + ((-1 * val20) + (0 * val21) + (1 * val22));
 
-            int gy = ((-1 * val00) + (-2 * val01) + (-1 * val02))
-                    + ((0 * val10) + (0 * val11) + (0 * val12))
-                    + ((1 * val20) + (2 * val21) + (1 * val22));
+                int gy = ((-1 * val00) + (-2 * val01) + (-1 * val02))
+                        + ((0 * val10) + (0 * val11) + (0 * val12))
+                        + ((1 * val20) + (2 * val21) + (1 * val22));
 
-            double gval = Math.sqrt((gx * gx) + (gy * gy));
-            int g = (int) gval;
+                double gval = Math.sqrt((gx * gx) + (gy * gy));
+                int g = (int) gval;
 
-            if (maxGradient.get() < g) {
-                maxGradient.set(g);
+                if (maxGradient.get() < g) {
+                    maxGradient.set(g);
+                }
+
+                edgeColors[i][j] = g;
             }
+        }
+        double scale = 255.0 / maxGradient.get();
 
-            edgeColors[i][j] = g;
+        for (int i = 1; i < x - 1; i++) {
+            for (int j = 1; j < y - 1; j++) {
+                int edgeColor = edgeColors[i][j];
+                edgeColor = (int) (edgeColor * scale);
+                edgeColor = 0xff000000 | (edgeColor << 16) | (edgeColor << 8) | edgeColor;
+
+                img.setRGB(i, j, edgeColor);
+            }
         }
     }
 

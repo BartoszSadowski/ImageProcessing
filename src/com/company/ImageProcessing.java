@@ -2,28 +2,21 @@ package com.company;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
-public class ImageThread implements Runnable{
-
+public class ImageProcessing {
     String absolutePath;
     String file;
     EdgeDetection edgeDetection;
-    CountDownLatch countDownLatch;
-    public ImageThread(CountDownLatch countDownLatch, String absolutePath, String file) {
+    public ImageProcessing(String absolutePath, String file) {
         this.absolutePath=absolutePath;
         this.file=file;
-        this.countDownLatch=countDownLatch;
     }
 
-    @Override
-    public void run() {
+    public void detection(){
         ImageBuffer imgbuffer = new ImageBuffer();
         BufferedImage img = imgbuffer.getImage(new File(absolutePath + "input\\" + file));
         edgeDetection = new EdgeDetection(img);
         edgeDetection.sobelEdgeDetection();
         imgbuffer.saveImage(new File(absolutePath + "output\\" + file));
-        countDownLatch.countDown();
     }
 }
