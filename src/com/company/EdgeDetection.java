@@ -1,52 +1,54 @@
 package com.company;
 
 import java.awt.image.BufferedImage;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 public class EdgeDetection {
-
+    BufferedImage img;
+    int x;
+    int y;
+    public int[][] edgeColors;
+    AtomicInteger maxGradient = new AtomicInteger(-1) ;
     public void sobelEdgeDetection(BufferedImage img) {
-        int x = img.getWidth();
-        int y = img.getHeight();
-
-        int maxGval = 0;
-        int[][] edgeColors = new int[x][y];
-        int maxGradient = -1;
-
+        this.img=img;
+        this.x = img.getWidth();
+        this.y = img.getHeight();
+        edgeColors = new int[x][y];
+        Worker runnable = null;
+        Thread myThreads[] = new Thread[y];
+        System.out.println(x);
+        System.out.println(y);
+        System.out.println(edgeColors.length);
         for (int i = 1; i < x - 1; i++) {
-            for (int j = 1; j < y - 1; j++) {
+            runnable = new Worker( y,  i,  img);
+            myThreads[i] = new Thread(runnable);
+            myThreads[i].start();
 
-                int val00 = getGrayScale(img.getRGB(i - 1, j - 1));
-                int val01 = getGrayScale(img.getRGB(i - 1, j));
-                int val02 = getGrayScale(img.getRGB(i - 1, j + 1));
-
-                int val10 = getGrayScale(img.getRGB(i, j - 1));
-                int val11 = getGrayScale(img.getRGB(i, j));
-                int val12 = getGrayScale(img.getRGB(i, j + 1));
-
-                int val20 = getGrayScale(img.getRGB(i + 1, j - 1));
-                int val21 = getGrayScale(img.getRGB(i + 1, j));
-                int val22 = getGrayScale(img.getRGB(i + 1, j + 1));
-
-                int gx = ((-1 * val00) + (0 * val01) + (1 * val02))
-                        + ((-2 * val10) + (0 * val11) + (2 * val12))
-                        + ((-1 * val20) + (0 * val21) + (1 * val22));
-
-                int gy = ((-1 * val00) + (-2 * val01) + (-1 * val02))
-                        + ((0 * val10) + (0 * val11) + (0 * val12))
-                        + ((1 * val20) + (2 * val21) + (1 * val22));
-
-                double gval = Math.sqrt((gx * gx) + (gy * gy));
-                int g = (int) gval;
-
-                if (maxGradient < g) {
-                    maxGradient = g;
-                }
-
-                edgeColors[i][j] = g;
-            }
+            edgeColors[i]= runnable.getEdgeColorsRow();
+            maxGradient= runnable.maxGradient;
         }
 
-        double scale = 255.0 / maxGradient;
+        for (int i = 1; i < x - 1; i++) {
+            try {
+                myThreads[i].join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+//        for (int i = 1; i < x - 1; i++) {
+//            for (int j = 1; j < y - 1; j++) {
+//                if (edgeColors[i][j]!=0)
+//                    System.out.println(edgeColors[i][j]);
+//            }
+//        }
+
+        System.out.println("THREADSAJDOSADJOSAIDKOASDASOD");
+        double scale = 255.0 / maxGradient.get();
 
         for (int i = 1; i < x - 1; i++) {
             for (int j = 1; j < y - 1; j++) {
@@ -71,4 +73,65 @@ public class EdgeDetection {
         return gray;
     }
 
+
+    public void countLine(int i){
+        for (int j = 1; j < y - 1; j++) {
+
+            int val00 = getGrayScale(img.getRGB(i - 1, j - 1));
+            int val01 = getGrayScale(img.getRGB(i - 1, j));
+            int val02 = getGrayScale(img.getRGB(i - 1, j + 1));
+
+            int val10 = getGrayScale(img.getRGB(i, j - 1));
+            int val11 = getGrayScale(img.getRGB(i, j));
+            int val12 = getGrayScale(img.getRGB(i, j + 1));
+
+            int val20 = getGrayScale(img.getRGB(i + 1, j - 1));
+            int val21 = getGrayScale(img.getRGB(i + 1, j));
+            int val22 = getGrayScale(img.getRGB(i + 1, j + 1));
+
+            int gx = ((-1 * val00) + (0 * val01) + (1 * val02))
+                    + ((-2 * val10) + (0 * val11) + (2 * val12))
+                    + ((-1 * val20) + (0 * val21) + (1 * val22));
+
+            int gy = ((-1 * val00) + (-2 * val01) + (-1 * val02))
+                    + ((0 * val10) + (0 * val11) + (0 * val12))
+                    + ((1 * val20) + (2 * val21) + (1 * val22));
+
+            double gval = Math.sqrt((gx * gx) + (gy * gy));
+            int g = (int) gval;
+
+            if (maxGradient.get() < g) {
+                maxGradient.set(g);
+            }
+
+            edgeColors[i][j] = g;
+        }
+    }
+
 }
+
+
+//
+//CountDownLatch countDownLatch = new CountDownLatch(5);
+//    List<Thread> workers;
+
+//    //System.out.println("run");
+////            workers = Stream
+////                    .generate(() -> new Thread(new Worker(countDownLatch, y, finalI, img)))
+////                    .limit(5)
+////                    .collect(toList());
+////            workers.forEach(Thread::start);
+//    //countLine(i);
+//    //workers.add(new Thread(new Worker(countDownLatch, y, finalI, img)));
+////            System.out.println(workers.);
+//    Thread worker = new Thread(new Worker(countDownLatch, y, finalI,img));
+//            worker.start();
+//
+//}
+//
+//        try {
+//                countDownLatch.await();
+//                } catch (InterruptedException e) {
+//                System.out.println("Something goes wrong with threads");
+//                }
+//                System.out.println("thread stop123333333333333333");
