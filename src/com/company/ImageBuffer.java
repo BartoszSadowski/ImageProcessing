@@ -9,7 +9,7 @@ public class ImageBuffer {
     public BufferedImage img;
 
 
-    public BufferedImage getImage(File filename) {
+    public BufferedImage setImage(File filename) {
         // This time, you can use an InputStream to load
         try {
             img = ImageIO.read(filename);

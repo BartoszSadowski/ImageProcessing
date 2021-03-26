@@ -22,11 +22,11 @@ public class Main {
             if (file.isFile()) {
 
                 /// run with threads with limits
-                workers = Stream
-                    .generate(() -> new Thread(new ImageThread(countDownLatch, path, file.getName())))
-                    .limit(5)
-                    .collect(toList());
-                workers.forEach(Thread::start);
+//                workers = Stream
+//                    .generate(() -> new Thread(new ImageThread(countDownLatch, path, file.getName())))
+//                    .limit(5)
+//                    .collect(toList());
+//                workers.forEach(Thread::start);
 
                 /// run without threads
 //                ImageProcessing imageProcessing = new ImageProcessing(path, file.getName());

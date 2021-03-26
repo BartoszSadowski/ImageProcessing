@@ -2,7 +2,6 @@ package com.company;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 public class ImageThread implements Runnable{
@@ -20,7 +19,7 @@ public class ImageThread implements Runnable{
     @Override
     public void run() {
         ImageBuffer imgbuffer = new ImageBuffer();
-        BufferedImage img = imgbuffer.getImage(new File(absolutePath + "input\\" + file));
+        BufferedImage img = imgbuffer.setImage(new File(absolutePath + "input\\" + file));
         edgeDetection = new EdgeDetection(img);
         edgeDetection.sobelEdgeDetection();
         imgbuffer.saveImage(new File(absolutePath + "output\\" + file));

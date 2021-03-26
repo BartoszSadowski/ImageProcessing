@@ -14,7 +14,7 @@ public class ImageProcessing {
 
     public void detection(){
         ImageBuffer imgbuffer = new ImageBuffer();
-        BufferedImage img = imgbuffer.getImage(new File(absolutePath + "input\\" + file));
+        BufferedImage img = imgbuffer.setImage(new File(absolutePath + "input\\" + file));
         edgeDetection = new EdgeDetection(img);
         edgeDetection.sobelEdgeDetection();
         imgbuffer.saveImage(new File(absolutePath + "output\\" + file));
