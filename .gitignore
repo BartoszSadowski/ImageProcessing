@@ -1,3 +1,6 @@
+#images
+src/static/images/*
+
 # Compiled class file
 *.class
 

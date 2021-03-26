@@ -15,18 +15,19 @@ public class Main {
 
         CountDownLatch countDownLatch = new CountDownLatch(5);
         List<Thread> workers;
-        String path = "D:\\JavaProjects\\images\\";
+        // images should be stored in static/images/input, just put there whatever images
+        String path = "src/static/images/";
         final File folder = new File(path + "input");
         File[] listOfFiles = folder.listFiles();
         for (File file : listOfFiles) {
             if (file.isFile()) {
 
                 /// run with threads with limits
-//                workers = Stream
-//                    .generate(() -> new Thread(new ImageThread(countDownLatch, path, file.getName())))
-//                    .limit(5)
-//                    .collect(toList());
-//                workers.forEach(Thread::start);
+                workers = Stream
+                    .generate(() -> new Thread(new ImageThread(countDownLatch, path, file.getName())))
+                    .limit(5)
+                    .collect(toList());
+                workers.forEach(Thread::start);
 
                 /// run without threads
 //                ImageProcessing imageProcessing = new ImageProcessing(path, file.getName());
@@ -39,11 +40,11 @@ public class Main {
 
 
                 // run with Executor
-                ExecutorService executor = Executors.newFixedThreadPool(5);
-                executor.submit(() -> {
-                    ImageProcessing imageProcessing = new ImageProcessing(path, file.getName());
-                    imageProcessing.detection();
-                });
+//                ExecutorService executor = Executors.newFixedThreadPool(5);
+//                executor.submit(() -> {
+//                    ImageProcessing imageProcessing = new ImageProcessing(path, file.getName());
+//                    imageProcessing.detection();
+//                });
             }
         }
     }
