@@ -22,7 +22,7 @@ public class ImageBuffer {
     public void saveImage(File filename) {
         try {
             File outputfile = new File(String.valueOf(filename));
-            ImageIO.write(img, "png", outputfile);
+            ImageIO.write(img, "jpg", outputfile);
         } catch (IOException e) {
             e.printStackTrace();
         }

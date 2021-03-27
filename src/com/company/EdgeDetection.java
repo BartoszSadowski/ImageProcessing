@@ -1,12 +1,7 @@
 package com.company;
 
 import java.awt.image.BufferedImage;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
 
 public class EdgeDetection {
     BufferedImage img;

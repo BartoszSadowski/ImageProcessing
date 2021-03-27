@@ -3,6 +3,7 @@ package com.company;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
+// unused class, delete?
 public class ImageProcessing {
     String absolutePath;
     String file;
