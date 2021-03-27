@@ -9,11 +9,9 @@ public class ImageThread implements Runnable{
     String absolutePath;
     String file;
     EdgeDetection edgeDetection;
-    CountDownLatch countDownLatch;
-    public ImageThread(CountDownLatch countDownLatch, String absolutePath, String file) {
+    public ImageThread(String absolutePath, String file) {
         this.absolutePath=absolutePath;
         this.file=file;
-        this.countDownLatch=countDownLatch;
     }
 
     @Override
@@ -23,6 +21,5 @@ public class ImageThread implements Runnable{
         edgeDetection = new EdgeDetection(img);
         edgeDetection.sobelEdgeDetection();
         imgbuffer.saveImage(new File(absolutePath + "output\\" + file));
-        countDownLatch.countDown();
     }
 }

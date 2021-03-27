@@ -16,9 +16,6 @@ public class Main {
 
     public static void main(String[] args) {
         ConfigReader.Methods method = ConfigReader.getMethod();
-
-        // idk what is this count down latch, but I did not delete that anywhere
-        CountDownLatch countDownLatch = new CountDownLatch(5);
         List<Thread> workers;
         // images should be stored in static/images/input, just put there whatever images
         String path = "src/static/images/";
@@ -31,7 +28,7 @@ public class Main {
                     for (File file : listOfFiles) {
                         if (file.isFile()) {
                             /// run with threads
-                            Thread imageThread = new Thread(new ImageThread(countDownLatch, path, file.getName()));
+                            Thread imageThread = new Thread(new ImageThread(path, file.getName()));
                             imageThread.start();
                         }
                     }
@@ -41,7 +38,7 @@ public class Main {
                         if (file.isFile()) {
                             /// run with threads with limits
                             workers = Stream
-                                    .generate(() -> new Thread(new ImageThread(countDownLatch, path, file.getName())))
+                                    .generate(() -> new Thread(new ImageThread(path, file.getName())))
                                     .limit(5)
                                     .collect(toList());
                             workers.forEach(Thread::start);

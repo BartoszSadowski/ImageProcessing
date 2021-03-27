@@ -17,40 +17,6 @@ public class EdgeDetection {
         edgeColors = new int[x][y];
     }
 
-    public void threadSobelEdgeDetection() {
-
-        Worker runnable = null;
-        Thread myThreads[] = new Thread[y];
-        for (int i = 1; i < x - 1; i++) {
-            runnable = new Worker( y,  i,  img);
-            myThreads[i] = new Thread(runnable);
-            myThreads[i].start();
-
-            edgeColors[i]= runnable.getEdgeColorsRow();
-            maxGradient= runnable.maxGradient;
-        }
-
-        for (int i = 1; i < x - 1; i++) {
-            try {
-                myThreads[i].join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        double scale = 255.0 / maxGradient.get();
-
-        for (int i = 1; i < x - 1; i++) {
-            for (int j = 1; j < y - 1; j++) {
-                int edgeColor = edgeColors[i][j];
-                edgeColor = (int) (edgeColor * scale);
-                edgeColor = 0xff000000 | (edgeColor << 16) | (edgeColor << 8) | edgeColor;
-
-                img.setRGB(i, j, edgeColor);
-            }
-        }
-    }
-
     public static int getGrayScale(int rgb) {
         int r = (rgb >> 16) & 0xff;
         int g = (rgb >> 8) & 0xff;
@@ -112,29 +78,3 @@ public class EdgeDetection {
     }
 
 }
-
-
-//
-//CountDownLatch countDownLatch = new CountDownLatch(5);
-//    List<Thread> workers;
-
-//    //System.out.println("run");
-////            workers = Stream
-////                    .generate(() -> new Thread(new Worker(countDownLatch, y, finalI, img)))
-////                    .limit(5)
-////                    .collect(toList());
-////            workers.forEach(Thread::start);
-//    //countLine(i);
-//    //workers.add(new Thread(new Worker(countDownLatch, y, finalI, img)));
-////            System.out.println(workers.);
-//    Thread worker = new Thread(new Worker(countDownLatch, y, finalI,img));
-//            worker.start();
-//
-//}
-//
-//        try {
-//                countDownLatch.await();
-//                } catch (InterruptedException e) {
-//                System.out.println("Something goes wrong with threads");
-//                }
-//                System.out.println("thread stop123333333333333333");
