@@ -1,17 +1,35 @@
 package com.company;
 
 import java.awt.image.BufferedImage;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class EdgeDetection {
+    BufferedImage img;
+    int x;
+    int y;
+    public int[][] edgeColors;
+    AtomicInteger maxGradient = new AtomicInteger(-1) ;
 
-    public static void sobelEdgeDetection(BufferedImage img) {
-        int x = img.getWidth();
-        int y = img.getHeight();
+    public EdgeDetection(BufferedImage img){
+        this.img=img;
+        this.x = img.getWidth();
+        this.y = img.getHeight();
+        edgeColors = new int[x][y];
+    }
 
-        int maxGval = 0;
-        int[][] edgeColors = new int[x][y];
-        int maxGradient = -1;
+    private static int getGrayScale(int rgb) {
+        int r = (rgb >> 16) & 0xff;
+        int g = (rgb >> 8) & 0xff;
+        int b = (rgb) & 0xff;
 
+        //from https://en.wikipedia.org/wiki/Grayscale, calculating luminance
+        int gray = (int)(0.2126 * r + 0.7152 * g + 0.0722 * b);
+
+        return gray;
+    }
+
+
+    public void sobelEdgeDetection(){
         for (int i = 1; i < x - 1; i++) {
             for (int j = 1; j < y - 1; j++) {
 
@@ -38,15 +56,14 @@ public class EdgeDetection {
                 double gval = Math.sqrt((gx * gx) + (gy * gy));
                 int g = (int) gval;
 
-                if (maxGradient < g) {
-                    maxGradient = g;
+                if (maxGradient.get() < g) {
+                    maxGradient.set(g);
                 }
 
                 edgeColors[i][j] = g;
             }
         }
-
-        double scale = 255.0 / maxGradient;
+        double scale = 255.0 / maxGradient.get();
 
         for (int i = 1; i < x - 1; i++) {
             for (int j = 1; j < y - 1; j++) {
@@ -58,17 +75,4 @@ public class EdgeDetection {
             }
         }
     }
-
-    public static int getGrayScale(int rgb) {
-        int r = (rgb >> 16) & 0xff;
-        int g = (rgb >> 8) & 0xff;
-        int b = (rgb) & 0xff;
-
-        //from https://en.wikipedia.org/wiki/Grayscale, calculating luminance
-        int gray = (int)(0.2126 * r + 0.7152 * g + 0.0722 * b);
-        //int gray = (r + g + b) / 3;
-
-        return gray;
-    }
-
 }

@@ -1,3 +1,6 @@
+#images
+src/static/images/*
+
 # Compiled class file
 *.class
 
@@ -152,6 +155,7 @@ fabric.properties
 hs_err_pid*
 
 ### VisualStudioCode ###
+.vscode
 .vscode/*
 !.vscode/tasks.json
 !.vscode/launch.json
