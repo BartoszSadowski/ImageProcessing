@@ -17,14 +17,13 @@ public class EdgeDetection {
         edgeColors = new int[x][y];
     }
 
-    public static int getGrayScale(int rgb) {
+    private static int getGrayScale(int rgb) {
         int r = (rgb >> 16) & 0xff;
         int g = (rgb >> 8) & 0xff;
         int b = (rgb) & 0xff;
 
         //from https://en.wikipedia.org/wiki/Grayscale, calculating luminance
         int gray = (int)(0.2126 * r + 0.7152 * g + 0.0722 * b);
-//        int gray = (r + g + b) / 3;
 
         return gray;
     }
@@ -76,5 +75,4 @@ public class EdgeDetection {
             }
         }
     }
-
 }
