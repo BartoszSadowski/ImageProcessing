@@ -17,12 +17,16 @@ public class Main {
     public static void main(String[] args) {
         ConfigReader.Methods method = ConfigReader.getMethod();
         List<Thread> workers;
-        // images should be stored in static/images/input, just put there whatever images
+
         String path = "src/static/images/";
+        // ensure existence of output and input directory
+        new File(path + "input").mkdirs();
+        new File(path + "output").mkdirs();
+
         final File folder = new File(path + "input");
         File[] listOfFiles = folder.listFiles();
-        if (listOfFiles != null) {
 
+        if (listOfFiles != null) {
             switch (method){
                 case THREADS:
                     for (File file : listOfFiles) {
@@ -77,5 +81,4 @@ public class Main {
             System.out.println("Directory is empty (list of files is null)");
         }
     }
-
 }
