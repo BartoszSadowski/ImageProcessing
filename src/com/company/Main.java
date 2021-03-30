@@ -58,15 +58,16 @@ public class Main {
                     break;
                 case EXECUTOR:
                     // run with Executor
-                    ExecutorService executor = Executors.newFixedThreadPool(5);
-                    executor.submit(() -> {
-                        for (File file : listOfFiles) {
+                    ExecutorService executor = Executors.newFixedThreadPool(100);
+                    for (File file : listOfFiles) {
+                        executor.submit(() -> {
                             if (file.isFile()) {
                                 ImageProcessing imageProcessing = new ImageProcessing(path, file.getName());
                                 imageProcessing.detection();
                             }
-                        }
-                    });
+                        
+                        });
+                    }
                     try {
                         executor.shutdown();
                     }
